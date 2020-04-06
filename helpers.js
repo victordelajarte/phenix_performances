@@ -19,10 +19,7 @@ const initializeMongoConnection = () => {
       if (err) reject(err);
       else {
         const database = client.db("phenix-performances");
-        console.log("database", database);
         performancesCollection = database.collection("performance");
-        console.log("performancesCollection", performancesCollection);
-
         resolve(result);
       }
     });
@@ -72,10 +69,13 @@ const getRAMCPUAndDateFromLine = (line) => {
 };
 
 const sendToDataBase = (fileData) =>
-  new Promise((resolve, reject) => {
-    console.log("sending");
-    resolve(1);
+  performancesCollection.insertMany(fileData, {
+    w: "majority",
+    j: true,
+    wtimeout: 1000 * 30,
   });
+
+const closeConnection = () => client.close();
 
 // Privates
 const _getAllFiles = (folderPath) =>
@@ -94,7 +94,8 @@ const helpers = {
   isLineFromLogInfoTechniqueJob,
   getRAMCPUAndDateFromLine,
   sendToDataBase,
-  initializeMongoConnection: initializeMongoConnection,
+  initializeMongoConnection,
+  closeConnection,
 };
 
 module.exports = helpers;

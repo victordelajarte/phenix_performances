@@ -25,11 +25,16 @@ async function main() {
       if (!data) continue;
       fileData.push(data);
     }
-
-    //console.log(fileData, fileData.length, fileData[fileData.length - 1]);
-    await helpers.sendToDataBase(fileData);
-    return;
+    try {
+      await helpers.sendToDataBase(fileData);
+    } catch (error) {
+      console.error(error);
+      return;
+    }
   }
+
+  await helpers.closeConnection();
+  return;
 }
 
 function manageLine(line) {
