@@ -10,12 +10,20 @@ async function main() {
     return;
   }
 
+  const lastFile = (await helpers.getLastDate())[0];
+
+  const lastDate = lastFile
+    ? lastFile.d
+    : new Date(2014, 1, 1).toISOString().split("T")[0];
+  console.log(lastDate);
+
   const files = await helpers.getAllServerFiles();
 
   for (let index = 0; index < files.length; index++) {
     const file = files[index];
     const date = file.split(".")[1].replace("log_", "");
     console.log(`Traitement fichier ${index + 1}/${files.length} : ${date}`);
+    if (date < lastDate) continue;
 
     const lines = helpers.getReadingInterface(file);
     const fileData = [];
@@ -26,7 +34,7 @@ async function main() {
       fileData.push(data);
     }
     try {
-      await helpers.sendToDataBase(fileData);
+      await helpers.sendToDataBase(fileData, date);
     } catch (error) {
       console.error(error);
       return;
@@ -34,7 +42,8 @@ async function main() {
   }
 
   await helpers.closeConnection();
-  return;
+  console.log("Bravo, c'est fini !");
+  process.exit(0);
 }
 
 function manageLine(line) {

@@ -12,7 +12,14 @@ const client = new MongoClient(process.env.MONGO_URI, {
 });
 let performancesCollection;
 
+const options = {
+  w: "majority",
+  j: true,
+  wtimeout: 1000 * 30,
+};
+
 const initializeMongoConnection = () => {
+  client.connect();
   console.log("initializeMongoConnection");
   return new Promise((resolve, reject) => {
     client.connect((err, result) => {
@@ -54,26 +61,35 @@ const isLineFromLogInfoTechniqueJob = (line) => {
 
 const getRAMCPUAndDateFromLine = (line) => {
   const splittedLine = line.split(" ");
-  const date = splittedLine[0] + "T" + splittedLine[1].replace(",", "."); // ISO format
-
+  const date = splittedLine[0];
+  const datetime = date + "T" + splittedLine[1].replace(",", "."); // ISO format
   const percentages = splittedLine.filter((e) => e.includes("%"));
   const cpu = +percentages[0].replace("%", "");
   const ram = +percentages[1].replace("%", "");
 
   const result = {
     d: date,
+    dt: datetime,
     c: cpu,
     r: ram,
   };
   return result;
 };
 
-const sendToDataBase = (fileData) =>
-  performancesCollection.insertMany(fileData, {
-    w: "majority",
-    j: true,
-    wtimeout: 1000 * 30,
-  });
+const getLastDate = () => {
+  return performancesCollection
+    .find()
+    .sort({ d: -1 })
+    .limit(1)
+    .project({ d: 1, _id: 0 })
+    .toArray();
+};
+
+const sendToDataBase = async (fileData, date) => {
+  console.log("sendToDataBase : " + date);
+  await performancesCollection.deleteMany({ d: date }, options);
+  return performancesCollection.insertMany(fileData, options);
+};
 
 const closeConnection = () => client.close();
 
@@ -96,6 +112,7 @@ const helpers = {
   sendToDataBase,
   initializeMongoConnection,
   closeConnection,
+  getLastDate,
 };
 
 module.exports = helpers;
