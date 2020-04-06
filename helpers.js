@@ -76,13 +76,16 @@ const getRAMCPUAndDateFromLine = (line) => {
   return result;
 };
 
-const getLastDate = () => {
-  return performancesCollection
+const getLastDate = async () => {
+  const lastFile = await performancesCollection
     .find()
     .sort({ d: -1 })
     .limit(1)
     .project({ d: 1, _id: 0 })
     .toArray();
+  return lastFile[0]
+    ? lastFile[0].d
+    : new Date(2014, 1, 1).toISOString().split("T")[0];
 };
 
 const sendToDataBase = async (fileData, date) => {

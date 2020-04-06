@@ -10,11 +10,7 @@ async function main() {
     return;
   }
 
-  const lastFile = (await helpers.getLastDate())[0];
-
-  const lastDate = lastFile
-    ? lastFile.d
-    : new Date(2014, 1, 1).toISOString().split("T")[0];
+  const lastDate = await helpers.getLastDate();
   console.log(lastDate);
 
   const files = await helpers.getAllServerFiles();
