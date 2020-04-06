@@ -14,7 +14,9 @@ async function main() {
     const results = [];
 
     for await (line of lines) {
-      results.push(manageLine(line));
+      const data = manageLine(line);
+      if (!data) continue;
+      results.push(data);
     }
 
     console.log(results, results.length, results[results.length - 1]);
