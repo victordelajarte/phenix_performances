@@ -6,5 +6,6 @@ Pour l'installation initiale :
 
 - Avoir installé Node (une version un peu récente, ce repo a commencé sous node v12.16.1)
 - `npm install` pour installer les dépendances
+- Créer un fichier .env avec les valeurs souhaitées, cf .env.example
 - `npm run test` pour lancer les tests
 - `npm start` pour installer les dépendances

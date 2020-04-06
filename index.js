@@ -3,6 +3,13 @@ const helpers = require("./helpers");
 main();
 
 async function main() {
+  try {
+    await helpers.initializeMongoConnection();
+  } catch (error) {
+    console.error(error);
+    return;
+  }
+
   const files = await helpers.getAllServerFiles();
 
   for (let index = 0; index < files.length; index++) {
@@ -11,15 +18,16 @@ async function main() {
     console.log(`Traitement fichier ${index + 1}/${files.length} : ${date}`);
 
     const lines = helpers.getReadingInterface(file);
-    const results = [];
+    const fileData = [];
 
     for await (line of lines) {
       const data = manageLine(line);
       if (!data) continue;
-      results.push(data);
+      fileData.push(data);
     }
 
-    console.log(results, results.length, results[results.length - 1]);
+    //console.log(fileData, fileData.length, fileData[fileData.length - 1]);
+    await helpers.sendToDataBase(fileData);
     return;
   }
 }

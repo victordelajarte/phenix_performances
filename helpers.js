@@ -1,13 +1,38 @@
 const fs = require("fs");
 const path = require("path");
 const readline = require("readline");
+const dotEnvExpand = require("dotenv-expand");
 
-const FOLDER_PATH = "C:\\Users\\Victor\\Desktop\\rattrapages\\logs";
+dotEnvExpand(require("dotenv").config());
+
+const MongoClient = require("mongodb").MongoClient;
+const client = new MongoClient(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+let performancesCollection;
+
+const initializeMongoConnection = () => {
+  console.log("initializeMongoConnection");
+  return new Promise((resolve, reject) => {
+    client.connect((err, result) => {
+      if (err) reject(err);
+      else {
+        const database = client.db("phenix-performances");
+        console.log("database", database);
+        performancesCollection = database.collection("performance");
+        console.log("performancesCollection", performancesCollection);
+
+        resolve(result);
+      }
+    });
+  });
+};
 
 const getAllServerFiles = () =>
   new Promise(async (resolve, reject) => {
     try {
-      let result = (await _getAllFiles(FOLDER_PATH)).filter((f) =>
+      let result = (await _getAllFiles(process.env.FOLDER_PATH)).filter((f) =>
         f.startsWith("PhenixService")
       );
 
@@ -19,7 +44,7 @@ const getAllServerFiles = () =>
   });
 
 const getReadingInterface = (fileName) => {
-  console.log("getReadingInterface : " + fileName);
+  // console.log("getReadingInterface : " + fileName);
   return readline.createInterface({
     input: fs.createReadStream(_getFilePath(fileName), "utf-8"),
     crlfDelay: Infinity,
@@ -46,6 +71,12 @@ const getRAMCPUAndDateFromLine = (line) => {
   return result;
 };
 
+const sendToDataBase = (fileData) =>
+  new Promise((resolve, reject) => {
+    console.log("sending");
+    resolve(1);
+  });
+
 // Privates
 const _getAllFiles = (folderPath) =>
   new Promise((resolve, reject) => {
@@ -55,13 +86,15 @@ const _getAllFiles = (folderPath) =>
     });
   });
 
-const _getFilePath = (fileName) => path.join(FOLDER_PATH, fileName);
+const _getFilePath = (fileName) => path.join(process.env.FOLDER_PATH, fileName);
 
 const helpers = {
   getAllServerFiles,
   getReadingInterface,
   isLineFromLogInfoTechniqueJob,
   getRAMCPUAndDateFromLine,
+  sendToDataBase,
+  initializeMongoConnection: initializeMongoConnection,
 };
 
 module.exports = helpers;
