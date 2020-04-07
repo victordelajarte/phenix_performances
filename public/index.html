@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Suivi des performances</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="lib/chart.min.js"></script>
+    <script src="lib/moment.min.js"></script>
+  </head>
+  <body>
+    <main>
+      <!-- CPU et RAM jour par jour, sur les 3 derniers jours -->
+      <section>
+        <div class="filters">
+          <div class="input-group">
+            <label for="section-1-start">Date de début</label>
+            <input type="date" id="section-1-start" />
+          </div>
+          <div class="input-group">
+            <label for="section-1-end">Date de fin</label>
+            <input type="date" id="section-1-end" />
+          </div>
+        </div>
+        <canvas id="section-1"></canvas>
+      </section>
+    </main>
+    <script src="main.js" defer></script>
+  </body>
+</html>
