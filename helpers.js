@@ -60,15 +60,17 @@ const isLineFromLogInfoTechniqueJob = (line) => {
 };
 
 const getRAMCPUAndDateFromLine = (line, d) => {
-  const splittedLine = line.split(" ");
-  const datetime = splittedLine[0] + "T" + splittedLine[1].replace(",", "."); // ISO format
-  const percentages = splittedLine.filter((e) => e.includes("%"));
+  const split = line.split(" ");
+  const datetime = new Date(`${split[0]}T${split[1]}`.replace(",", ".")); // ISO format
+  datetime.setHours(datetime.getHours() + 1); // heure française
+
+  const percentages = split.filter((e) => e.includes("%"));
   const cpu = +percentages[0].replace("%", "");
   const ram = +percentages[1].replace("%", "");
 
   const result = {
     d,
-    dt: new Date(datetime),
+    dt: datetime,
     c: cpu,
     r: ram,
   };

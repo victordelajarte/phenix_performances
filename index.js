@@ -17,15 +17,12 @@ async function main() {
 
   for (let index = 0; index < files.length; index++) {
     const file = files[index];
-    const dateString = file.split(".")[1].replace("log_", "");
-    console.log(
-      `Traitement fichier ${index + 1}/${files.length} : ${dateString}`
-    );
-    if (dateString < lastDate) continue;
+    const date = file.split(".")[1].replace("log_", "");
+    console.log(`Traitement fichier ${index + 1}/${files.length} : ${date}`);
+    if (date < lastDate) continue;
 
     const lines = helpers.getReadingInterface(file);
     const fileData = [];
-    const date = new Date(dateString);
     for await (line of lines) {
       const data = manageLine(line, date);
       if (!data) continue;
