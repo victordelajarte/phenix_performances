@@ -3,15 +3,17 @@ const helpers = require("./helpers");
 main();
 
 async function main() {
+  console.time("Fill Database");
   try {
     await helpers.initializeMongoConnection();
+    console.timeLog("Fill Database");
   } catch (error) {
     console.error(error);
     return;
   }
 
   const lastDate = await helpers.getLastDate();
-  console.log(lastDate);
+  console.timeLog("Fill Database", "lastDate", lastDate);
 
   const files = await helpers.getAllServerFiles();
 
@@ -37,6 +39,7 @@ async function main() {
   }
 
   await helpers.closeConnection();
+  console.timeEnd("Fill Database");
   console.log("Bravo, c'est fini !");
   process.exit(0);
 }
