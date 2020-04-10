@@ -1,21 +1,21 @@
 const helpers = require("./helpers");
 
-describe("getAllServerFiles", async () => {
-  const files = await helpers.getAllServerFiles();
+describe("getAllServerFiles", () => {
+  helpers.getAllServerFiles().then((files) => {
+    test("Should get files", () => {
+      expect(files.length).toBeGreaterThan(0);
+    });
+    test("Random file should begin with PhenixService", () => {
+      expect(
+        _getRandomElementFromArray(files).startsWith("PhenixService")
+      ).toBeTruthy();
+    });
 
-  test("Should get files", () => {
-    expect(files.length).toBeGreaterThan(0);
-  });
-  test("Random file should begin with PhenixService", () => {
-    expect(
-      _getRandomElementFromArray(files).startsWith("PhenixService")
-    ).toBeTruthy();
-  });
-
-  test("Random file should not begin with PhenixService", () => {
-    expect(
-      _getRandomElementFromArray(files).startsWith("PhenixService")
-    ).toBeTruthy();
+    test("Random file should not begin with PhenixService", () => {
+      expect(
+        _getRandomElementFromArray(files).startsWith("PhenixService")
+      ).toBeTruthy();
+    });
   });
 });
 
