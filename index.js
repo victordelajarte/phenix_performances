@@ -17,15 +17,17 @@ async function main() {
 
   for (let index = 0; index < files.length; index++) {
     const file = files[index];
-    const date = file.split(".")[1].replace("log_", "");
-    console.log(`Traitement fichier ${index + 1}/${files.length} : ${date}`);
-    if (date < lastDate) continue;
+    const dateString = file.split(".")[1].replace("log_", "");
+    console.log(
+      `Traitement fichier ${index + 1}/${files.length} : ${dateString}`
+    );
+    if (dateString < lastDate) continue;
 
     const lines = helpers.getReadingInterface(file);
     const fileData = [];
-
+    const date = new Date(dateString);
     for await (line of lines) {
-      const data = manageLine(line);
+      const data = manageLine(line, date);
       if (!data) continue;
       fileData.push(data);
     }
@@ -42,8 +44,8 @@ async function main() {
   process.exit(0);
 }
 
-function manageLine(line) {
+function manageLine(line, date) {
   if (helpers.isLineFromLogInfoTechniqueJob(line)) {
-    return helpers.getRAMCPUAndDateFromLine(line);
+    return helpers.getRAMCPUAndDateFromLine(line, date);
   }
 }

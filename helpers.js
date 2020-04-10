@@ -59,17 +59,16 @@ const isLineFromLogInfoTechniqueJob = (line) => {
   return line.includes("LogInfoTechniqueJob : CPU");
 };
 
-const getRAMCPUAndDateFromLine = (line) => {
+const getRAMCPUAndDateFromLine = (line, d) => {
   const splittedLine = line.split(" ");
-  const date = splittedLine[0];
-  const datetime = date + "T" + splittedLine[1].replace(",", "."); // ISO format
+  const datetime = splittedLine[0] + "T" + splittedLine[1].replace(",", "."); // ISO format
   const percentages = splittedLine.filter((e) => e.includes("%"));
   const cpu = +percentages[0].replace("%", "");
   const ram = +percentages[1].replace("%", "");
 
   const result = {
-    d: date,
-    dt: datetime,
+    d,
+    dt: new Date(datetime),
     c: cpu,
     r: ram,
   };
@@ -96,6 +95,16 @@ const sendToDataBase = async (fileData, date) => {
 
 const closeConnection = () => client.close();
 
+const deleteCollection = async () => {
+  try {
+    await initializeMongoConnection();
+    await performancesCollection.deleteMany({}, options);
+    closeConnection();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // Privates
 const _getAllFiles = (folderPath) =>
   new Promise((resolve, reject) => {
@@ -116,6 +125,7 @@ const helpers = {
   initializeMongoConnection,
   closeConnection,
   getLastDate,
+  deleteCollection,
 };
 
 module.exports = helpers;
