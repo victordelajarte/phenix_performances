@@ -95,6 +95,12 @@ const sendToDataBase = async (fileData, date) => {
   return performancesCollection.insertMany(fileData, options);
 };
 
+const getCollectionSize = async () => {
+  const stats = await performancesCollection.stats({ scale: 1024 });
+  const { size } = stats;
+  console.log(`Total used : ${_round(size)}MB/500MB`);
+};
+
 const closeConnection = () => client.close();
 
 const deleteCollection = async () => {
@@ -118,6 +124,10 @@ const _getAllFiles = (folderPath) =>
 
 const _getFilePath = (fileName) => path.join(process.env.FOLDER_PATH, fileName);
 
+const _round = (number, precision = 2) => {
+  return Math.round(number * 10 ** precision) / 10 ** precision;
+};
+
 const helpers = {
   getAllServerFiles,
   getReadingInterface,
@@ -128,6 +138,7 @@ const helpers = {
   closeConnection,
   getLastDate,
   deleteCollection,
+  getCollectionSize,
 };
 
 module.exports = helpers;

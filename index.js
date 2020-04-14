@@ -37,9 +37,11 @@ async function main() {
       return;
     }
   }
+  await helpers.getCollectionSize();
 
   await helpers.closeConnection();
   console.timeEnd("Fill Database");
+
   console.log("Bravo, c'est fini !");
   process.exit(0);
 }
