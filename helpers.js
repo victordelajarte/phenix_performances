@@ -19,7 +19,6 @@ const options = {
 };
 
 const initializeMongoConnection = () => {
-  client.connect();
   console.log("initializeMongoConnection");
   return new Promise((resolve, reject) => {
     client.connect((err, result) => {
@@ -98,7 +97,7 @@ const sendToDataBase = async (fileData, date) => {
 const getCollectionSize = async () => {
   const stats = await performancesCollection.stats({ scale: 1024 });
   const { size } = stats;
-  console.log(`Total used : ${_round(size)}MB/500MB`);
+  console.log(`Total used : ${_round(size / 1024)}MB/500MB`);
 };
 
 const closeConnection = () => client.close();
