@@ -22,8 +22,13 @@ const initializeMongoConnection = () => {
   console.log("initializeMongoConnection");
   return new Promise((resolve, reject) => {
     client.connect((err, result) => {
-      if (err) reject(err);
-      else {
+      if (err) {
+        console.log(
+          "Erreur lors de la connexion à MongoDB: vérifier que l'adresse IP est bien whitelistée"
+        );
+
+        reject(err);
+      } else {
         const database = client.db("phenix-performances");
         performancesCollection = database.collection("performance");
         resolve(result);
