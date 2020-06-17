@@ -24,7 +24,7 @@ const initializeMongoConnection = () => {
     client.connect((err, result) => {
       if (err) {
         console.log(
-          "Erreur lors de la connexion à MongoDB: vérifier que l'adresse IP est bien whitelistée"
+          "Erreur lors de la connexion à MongoDB: vérifier que l'adresse IP est bien whitelistée (dans MongoDB, Network Access)"
         );
 
         reject(err);
